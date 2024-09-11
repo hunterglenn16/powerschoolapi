@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file just once
 load_dotenv()
 
+
 class DataAccess:
     def __init__(self, access_token, school_id, base_url, queries_root_path, xml_file_name, max_retries=3):
         self.access_token = access_token
@@ -29,7 +30,8 @@ class DataAccess:
                 full_name = query.get('name')
                 if full_name:
                     last_part = full_name.split('.')[-1]
-                    self.queries[last_part] = f"{self.base_url}/ws/schema/query/{full_name}"
+                    self.queries[last_part] = f"{
+                        self.base_url}/ws/schema/query/{full_name}"
         except FileNotFoundError:
             ic(f"File not found: {queries_path}")
             # Consider whether to raise an exception or handle it differently
@@ -39,7 +41,8 @@ class DataAccess:
     def fetch_data(self, last_part_query_name, params=None, method='GET'):
         endpoint = self.queries.get(last_part_query_name)
         if not endpoint:
-            raise ValueError(f"No matching endpoint found for query part: {last_part_query_name}.")
+            raise ValueError(f"No matching endpoint found for query part: {
+                             last_part_query_name}.")
 
         retries = 0
         while retries < self.max_retries:
@@ -59,11 +62,13 @@ class DataAccess:
         }
 
         if method.upper() == 'POST':
-            response = requests.post(endpoint, headers=headers, data=json.dumps(params))
+            response = requests.post(
+                endpoint, headers=headers, data=json.dumps(params))
         else:
             response = requests.get(endpoint, headers=headers, params=params)
 
         return response
+
 
 class StandardAccess:
     def __init__(self, access_token, base_url, max_retries=3):
@@ -75,7 +80,8 @@ class StandardAccess:
         retries = 0
         while retries < self.max_retries:
             try:
-                response = self.make_api_request(endpoint, params, method, headers)
+                response = self.make_api_request(
+                    endpoint, params, method, headers)
                 response.raise_for_status()
                 return response.json() if response.content else None
             except Exception as e:
@@ -95,9 +101,11 @@ class StandardAccess:
         full_url = f"{self.base_url}/{endpoint}"
 
         if method.upper() == 'POST':
-            response = requests.post(full_url, headers=headers, data=json.dumps(params))
+            response = requests.post(
+                full_url, headers=headers, data=json.dumps(params))
         elif method.upper() == 'PUT':
-            response = requests.put(full_url, headers=headers, data=json.dumps(params))
+            response = requests.put(
+                full_url, headers=headers, data=json.dumps(params))
         else:  # Default to GET
             response = requests.get(full_url, headers=headers, params=params)
 

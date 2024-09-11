@@ -9,12 +9,14 @@ from dotenv import load_dotenv
 # Load environment variables from .env file just once
 load_dotenv()
 
+
 class TLSAdapter(HTTPAdapter):
     def init_poolmanager(self, *args, **kwargs):
         context = create_urllib3_context()
         context.options &= ~ssl.OP_NO_TLSv1_1
         kwargs['ssl_context'] = context
         return super(TLSAdapter, self).init_poolmanager(*args, **kwargs)
+
 
 class AccessToken:
     def __init__(self):
@@ -44,6 +46,7 @@ class AccessToken:
             if response.status_code == 200:
                 self.token = response.json()["access_token"]
             else:
-                raise Exception(f"Failed to obtain access token. Status Code: {response.status_code}, Message: {response.text}")
+                raise Exception(f"Failed to obtain access token. Status Code: {
+                                response.status_code}, Message: {response.text}")
 
         return self.token
